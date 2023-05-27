@@ -33,6 +33,10 @@ func (ste *StackTracedError) Error() string {
 	return ste.err.Error() + "\n" + string(ste.stack)
 }
 
+type ErrorMessage struct {
+	Error string `json:"error"`
+}
+
 func GinHandlerWithError(handler func(*gin.Context) (any, error)) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		//userEmail := ctx.Query("email")
@@ -47,10 +51,13 @@ func GinHandlerWithError(handler func(*gin.Context) (any, error)) gin.HandlerFun
 		}
 		if err != nil {
 			log.Errorf("error: %v", err)
-			ctx.AbortWithStatusJSON(http.StatusInternalServerError, NewStackTracedError(err))
+			ctx.JSON(http.StatusInternalServerError, &ErrorMessage{
+				Error: err.Error(),
+			})
 		} else {
 			event.EventData = eventData
 			ctx.AbortWithStatusJSON(http.StatusOK, event)
 		}
+		return
 	}
 }

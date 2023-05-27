@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/CodingCookieRookie/audit-log/constants"
 	"github.com/CodingCookieRookie/audit-log/handlers"
 	"github.com/CodingCookieRookie/audit-log/models"
 	"github.com/CodingCookieRookie/audit-log/my_sql"
@@ -91,6 +92,7 @@ func queryEvents(w http.ResponseWriter, r *http.Request) {
 // }
 
 func main() {
+	constants.Init()
 	engine := gin.Default()
 	my_sql.Init()
 	handlers.Route(engine)

@@ -7,7 +7,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/joho/godotenv"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -131,7 +130,6 @@ func makeLogger() (*zap.Logger, error) {
 
 func Init() {
 	once.Do(func() {
-		godotenv.Load()
 		zap_logger, err := makeLogger()
 		if err != nil {
 			panic(err)
