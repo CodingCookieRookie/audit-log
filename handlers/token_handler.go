@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"fmt"
+
 	"github.com/CodingCookieRookie/audit-log/handlers/ctrl"
 	"github.com/CodingCookieRookie/audit-log/log"
 	"github.com/gin-gonic/gin"
@@ -26,6 +28,6 @@ func HandleApiToken(c *gin.Context) (any, error) {
 		return nil, err
 	}
 	return &TokenGetResponse{
-		Message: "Token posted successfully",
+		Message: fmt.Sprintf("api token sent to %v successfully", tokenGetRequest.Email),
 	}, nil
 }

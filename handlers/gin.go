@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"runtime/debug"
 
-	"github.com/CodingCookieRookie/audit-log/log"
-	"github.com/CodingCookieRookie/audit-log/models"
 	"github.com/gin-gonic/gin"
 )
 
@@ -39,24 +37,14 @@ type ErrorMessage struct {
 
 func GinHandlerWithError(handler func(*gin.Context) (any, error)) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		//userEmail := ctx.Query("email")
-		//eventType := ctx.Query("type")
-		eventData, err := handler(ctx)
-		//timeStamp := time.Now()
+		data, err := handler(ctx)
 
-		event := &models.Event{
-			//UserEmail: userEmail,
-			//EventType: eventType,
-			//Timestamp: timeStamp,
-		}
 		if err != nil {
-			log.Errorf("error: %v", err)
-			ctx.JSON(http.StatusInternalServerError, &ErrorMessage{
+			ctx.AbortWithStatusJSON(http.StatusInternalServerError, &ErrorMessage{
 				Error: err.Error(),
 			})
 		} else {
-			event.EventData = eventData
-			ctx.AbortWithStatusJSON(http.StatusOK, event)
+			ctx.AbortWithStatusJSON(http.StatusOK, data)
 		}
 		return
 	}

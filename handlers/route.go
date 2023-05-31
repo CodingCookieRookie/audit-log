@@ -4,13 +4,16 @@ import "github.com/gin-gonic/gin"
 
 func Route(engine *gin.Engine) {
 
-	// add jwt token
-	//event.GET("", GinHandlerWithError(HandleEventGet))
-	//user := engine.Group("user")
+	{
+		api := engine.Group("/api")
+		api.GET("/token", GinHandlerWithError(HandleApiToken))
+	}
 
-	engine.GET("/token", GinHandlerWithError(HandleApiToken))
+	{
+		user := engine.Group("/users")
+		user.Use(UserAuth)
+		user.GET("/events", GinHandlerWithError(HandleEventGet))
+		user.POST("/events", GinHandlerWithError(HandleEventPost))
+	}
 
-	//	event := engine.Group("")
-	engine.Use(UserAuth)
-	engine.POST("/event", GinHandlerWithError(HandleEventPost))
 }
