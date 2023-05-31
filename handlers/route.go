@@ -3,9 +3,14 @@ package handlers
 import "github.com/gin-gonic/gin"
 
 func Route(engine *gin.Engine) {
-	event := engine.Group("")
+
 	// add jwt token
 	//event.GET("", GinHandlerWithError(HandleEventGet))
-	event.POST("/event", GinHandlerWithError(HandleEventPost))
-	event.POST("/user", GinHandlerWithError(HandleUserPost))
+	//user := engine.Group("user")
+
+	engine.GET("/token", GinHandlerWithError(HandleApiToken))
+
+	//	event := engine.Group("")
+	engine.Use(UserAuth)
+	engine.POST("/event", GinHandlerWithError(HandleEventPost))
 }

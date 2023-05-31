@@ -13,3 +13,7 @@ func Init() {
 func GetAPIKey() string {
 	return os.Getenv("API_KEY")
 }
+
+func GetServiceEmailPassword() string {
+	return os.Getenv("EMAIL_PASSWORD")
+}
