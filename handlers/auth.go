@@ -7,9 +7,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const (
+	EMAIL_FIELD = "email"
+	TOKEN_FIELD = "token"
+)
+
 func UserAuth(c *gin.Context) {
-	email := c.GetHeader("email")
-	token := c.GetHeader("token")
+	email := c.GetHeader(EMAIL_FIELD)
+	token := c.GetHeader(TOKEN_FIELD)
 
 	if len(email) == 0 {
 		c.AbortWithStatusJSON(http.StatusBadRequest, &ErrorMessage{

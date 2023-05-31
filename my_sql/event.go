@@ -10,24 +10,25 @@ func createEventsTable() error {
 	return Exec(`CREATE TABLE IF NOT EXISTS events (
 		event_id int(11) NOT NULL AUTO_INCREMENT,
 		event_type varchar(50) NOT NULL,
-		event_time_stamp bigint(14),
+		event_time_stamp bigint(20) NOT NULL,
 		event_data_json varchar(6000),
-		PRIMARY KEY(event_id), INDEX (event_type), INDEX(event_time_stamp)) 
+		user_email varchar(320) NOT NULL,
+		PRIMARY KEY(event_id), INDEX(user_email, event_type, event_time_stamp), INDEX(user_email, event_time_stamp))
 	`)
 }
 
-func InsertEvent(eventType string, eventTimestamp int, eventDataJson string) error {
+func InsertEvent(userEmail, eventType string, eventTimestamp int, eventDataJson string) error {
 	if len(eventType) == 0 {
 		return nil
 	}
 	var query strings.Builder
-	args := []any{eventType, eventTimestamp, eventDataJson}
+	args := []any{userEmail, eventType, eventTimestamp, eventDataJson}
 	query.WriteString(returnPlaceHolderString(args))
 	return Exec(
-		`INSERT INTO audit_log.events (event_type, event_time_stamp, event_data_json) VALUES `+query.String(), args...)
+		`INSERT INTO audit_log.events (user_email, event_type, event_time_stamp, event_data_json) VALUES `+query.String(), args...)
 }
 
-func GetEvents(eventType string, startTimeStampMs, endTimeStampMs int) ([]*models.Event, error) {
+func GetEvents(userEmail, eventType string, startTimeStampMs, endTimeStampMs int) ([]*models.Event, error) {
 	return Query(func(event *models.Event) []interface{} {
 		return []interface{}{
 			&event.EventType, &event.EventTimeStampMs, &event.EventDataJson,
@@ -37,14 +38,16 @@ func GetEvents(eventType string, startTimeStampMs, endTimeStampMs int) ([]*model
 			event_type, event_time_stamp, event_data_json	
 		FROM audit_log.events 
 		WHERE
+			user_email = ?
+		AND
 			event_type = ?
 		AND 
 			event_time_stamp <= ?
 		AND 
-			event_time_stamp >= ?`, eventType, endTimeStampMs, startTimeStampMs)
+			event_time_stamp >= ?`, userEmail, eventType, endTimeStampMs, startTimeStampMs)
 }
 
-func GetEventByByTimeStamp(startTimeStampMs, endTimeStampMs int) ([]*models.Event, error) {
+func GetEventByByTimeStamp(userEmail string, startTimeStampMs, endTimeStampMs int) ([]*models.Event, error) {
 	return Query(func(event *models.Event) []interface{} {
 		return []interface{}{
 			&event.EventType, &event.EventTimeStampMs, &event.EventDataJson,
@@ -56,5 +59,5 @@ func GetEventByByTimeStamp(startTimeStampMs, endTimeStampMs int) ([]*models.Even
 		WHERE
 			event_time_stamp <= ?
 		AND 
-			event_time_stamp >= ?`, endTimeStampMs, startTimeStampMs)
+			event_time_stamp >= ?`, userEmail, endTimeStampMs, startTimeStampMs)
 }

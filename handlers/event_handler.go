@@ -29,6 +29,8 @@ func HandleEventGet(c *gin.Context) (any, error) {
 		return nil, err
 	}
 
+	userEmail := c.GetHeader(EMAIL_FIELD)
+
 	var endTimeStampMS int
 	var startTimeStampMs int
 
@@ -64,7 +66,7 @@ func HandleEventGet(c *gin.Context) (any, error) {
 		return nil, fmt.Errorf("event_timestamp_after_ms value invalid")
 	}
 
-	events, err := ctrl.GetEvents(eventGetRequest.EventType, startTimeStampMs, endTimeStampMS)
+	events, err := ctrl.GetEvents(userEmail, eventGetRequest.EventType, startTimeStampMs, endTimeStampMS)
 
 	if err != nil {
 		log.Errorf("error getting events, err: %v", err)
@@ -86,7 +88,9 @@ func HandleEventPost(c *gin.Context) (any, error) {
 		return nil, err
 	}
 
-	err := ctrl.PostEvent(event)
+	email := c.GetHeader(EMAIL_FIELD)
+
+	err := ctrl.PostEvent(email, event)
 
 	eventPostResponse := &EventPostResponse{
 		Status: "post event to database success",

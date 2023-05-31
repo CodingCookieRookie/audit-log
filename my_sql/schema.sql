@@ -7,5 +7,6 @@ CREATE TABLE events (
     event_type varchar(50) NOT NULL,
     event_time_stamp bigint(20),
     event_data_json varchar(6000),
-    PRIMARY KEY(event_id), INDEX (event_type), INDEX(event_time_stamp)
+    user_email varchar(320),
+    PRIMARY KEY(event_id), INDEX (user_email, event_type, event_time_stamp), INDEX(user_email, event_time_stamp)
 ) 
