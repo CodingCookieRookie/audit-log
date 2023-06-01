@@ -10,7 +10,7 @@ import (
 )
 
 var db *sql.DB
-var dbName = "audit_log"
+var dbName = "sql12622940"
 var once sync.Once
 
 func Init() {

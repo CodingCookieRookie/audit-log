@@ -1,6 +1,7 @@
 package my_sql
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/CodingCookieRookie/audit-log/models"
@@ -25,7 +26,7 @@ func InsertEvent(userEmail, eventType string, eventTimestamp int, eventDataJson 
 	args := []any{userEmail, eventType, eventTimestamp, eventDataJson}
 	query.WriteString(returnPlaceHolderString(args))
 	return Exec(
-		`INSERT INTO audit_log.events (user_email, event_type, event_time_stamp, event_data_json) VALUES `+query.String(), args...)
+		fmt.Sprintf(`INSERT INTO %v.events (user_email, event_type, event_time_stamp, event_data_json) VALUES `, dbName)+query.String(), args...)
 }
 
 func GetEvents(userEmail, eventType string, startTimeStampMs, endTimeStampMs int) ([]*models.Event, error) {
@@ -34,9 +35,9 @@ func GetEvents(userEmail, eventType string, startTimeStampMs, endTimeStampMs int
 			&event.EventType, &event.EventTimeStampMs, &event.EventDataJson,
 		}
 	},
-		`SELECT
+		fmt.Sprintf(`SELECT
 			event_type, event_time_stamp, event_data_json	
-		FROM audit_log.events 
+		FROM %v.events 
 		WHERE
 			user_email = ?
 		AND
@@ -44,7 +45,7 @@ func GetEvents(userEmail, eventType string, startTimeStampMs, endTimeStampMs int
 		AND 
 			event_time_stamp <= ?
 		AND 
-			event_time_stamp >= ?`, userEmail, eventType, endTimeStampMs, startTimeStampMs)
+			event_time_stamp >= ?`, dbName), userEmail, eventType, endTimeStampMs, startTimeStampMs)
 }
 
 func GetEventByByTimeStamp(userEmail string, startTimeStampMs, endTimeStampMs int) ([]*models.Event, error) {
@@ -53,11 +54,11 @@ func GetEventByByTimeStamp(userEmail string, startTimeStampMs, endTimeStampMs in
 			&event.EventType, &event.EventTimeStampMs, &event.EventDataJson,
 		}
 	},
-		`SELECT
+		fmt.Sprintf(`SELECT
 			event_type, event_time_stamp, event_data_json	
-		FROM audit_log.events 
+		FROM %v.events 
 		WHERE
 			event_time_stamp <= ?
 		AND 
-			event_time_stamp >= ?`, userEmail, endTimeStampMs, startTimeStampMs)
+			event_time_stamp >= ?`, dbName), userEmail, endTimeStampMs, startTimeStampMs)
 }
