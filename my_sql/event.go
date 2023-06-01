@@ -55,9 +55,11 @@ func GetEventByByTimeStamp(userEmail string, startTimeStampMs, endTimeStampMs in
 		}
 	},
 		fmt.Sprintf(`SELECT
-			event_type, event_time_stamp, event_data_json	
+			event_type,	event_time_stamp, event_data_json	
 		FROM %v.events 
 		WHERE
+			user_email = ?
+		AND
 			event_time_stamp <= ?
 		AND 
 			event_time_stamp >= ?`, dbName), userEmail, endTimeStampMs, startTimeStampMs)
