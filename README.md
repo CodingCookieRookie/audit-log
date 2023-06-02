@@ -1,6 +1,6 @@
-# audit-log
+# Audit-Log
 
-Audit log for user to get and post any event
+Service for user to get and post any event log
  
 1. Git clone repository into audit-log folder
 2. Open a new terminal in the audit-log folder directory and run cmd `./start.sh` (Make sure no other existing docker containers are running, else comment out docker kill and rm in start.sh file)
@@ -15,5 +15,5 @@ Audit log for user to get and post any event
     <h3> User post event
     curl -H "email:alvinchee98@gmail.com" -H "token:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFsdmluY2hlZTk4QGdtYWlsLmNvbSIsImV4cCI6MTY4ODExNDQyNH0.sXUYUdGRvIKOqtSEKWJkE9Q7CI2JK4R_0ZubciG8ZfE" -d '{"event_type":"bill", "event_data":{"username":"alvin", "amount":311, "currency":"USD"}}' -X POST localhost:3000/users/events
 
-    <h3> Send email to user
+    <h3> Staff send token to user via email
     curl localhost:3000/api/token?email=alvinchee98@gmail.com -H "app-secret:Up0F9YrxSDruZlKAxgSiKfdZp7EB8D4XY5vWtbhElHw="
