@@ -9,7 +9,7 @@ import (
 )
 
 func PostEvent(userEmail string, event *models.Event) error {
-	eventDataJson, err := json.Marshal(event.EventDataJson)
+	eventDataJson, err := json.Marshal(event.EventData)
 	if err != nil {
 		log.Errorf("error marshalling event data: %v", err)
 		return err
@@ -18,9 +18,9 @@ func PostEvent(userEmail string, event *models.Event) error {
 	return my_sql.InsertEvent(userEmail, event.EventType, event.EventTimeStampMs, string(eventDataJson))
 }
 
-func GetEvents(userEmail, eventType string, startTimeStampMs, endTimeStampMS int) ([]*models.Event, error) {
+func GetEvents(userEmail, eventType string, startTimeStampMs, endTimeStampMs int, eventOrder string) ([]*models.Event, error) {
 	if len(eventType) == 0 {
-		return my_sql.GetEventByByTimeStamp(userEmail, startTimeStampMs, endTimeStampMS)
+		return my_sql.GetEventByByTimeStamp(userEmail, startTimeStampMs, endTimeStampMs, eventOrder)
 	}
-	return my_sql.GetEvents(userEmail, eventType, startTimeStampMs, endTimeStampMS)
+	return my_sql.GetEvents(userEmail, eventType, startTimeStampMs, endTimeStampMs, eventOrder)
 }

@@ -6,7 +6,7 @@ func Route(engine *gin.Engine) {
 
 	{
 		api := engine.Group("/api")
-		api.GET("/token", GinHandlerWithError(HandleApiToken))
+		api.GET("/token", GinHandlerWithError(HandleApiTokenGet))
 	}
 
 	{

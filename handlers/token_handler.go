@@ -3,23 +3,28 @@ package handlers
 import (
 	"fmt"
 
+	"github.com/CodingCookieRookie/audit-log/constants"
 	"github.com/CodingCookieRookie/audit-log/handlers/ctrl"
 	"github.com/CodingCookieRookie/audit-log/log"
 	"github.com/gin-gonic/gin"
 )
 
 type TokenGetRequest struct {
-	Email string `json:"email"`
+	Email string `form:"email"`
 }
 
 type TokenGetResponse struct {
 	Message string `json:"message"`
 }
 
-func HandleApiToken(c *gin.Context) (any, error) {
+func HandleApiTokenGet(c *gin.Context) (any, error) {
+	if c.GetHeader("app-secret") != constants.GetAppSecret() {
+		return nil, fmt.Errorf("incorrect app secret")
+	}
+
 	var tokenGetRequest TokenGetRequest
 
-	if err := c.BindHeader(&tokenGetRequest); err != nil {
+	if err := c.BindQuery(&tokenGetRequest); err != nil {
 		log.Errorf("error binding token, err: %v", err)
 		return nil, err
 	}

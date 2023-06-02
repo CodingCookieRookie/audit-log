@@ -14,7 +14,7 @@ func createEventsTable() error {
 		event_time_stamp bigint(20) NOT NULL,
 		event_data_json varchar(6000),
 		user_email varchar(320) NOT NULL,
-		PRIMARY KEY(event_id), INDEX(user_email, event_type, event_time_stamp), INDEX(user_email, event_time_stamp))
+		PRIMARY KEY(event_id), INDEX(user_email, event_type, event_time_stamp), INDEX(user_email, event_time_stamp), INDEX(event_time_stamp))
 	`)
 }
 
@@ -29,10 +29,10 @@ func InsertEvent(userEmail, eventType string, eventTimestamp int, eventDataJson 
 		fmt.Sprintf(`INSERT INTO %v.events (user_email, event_type, event_time_stamp, event_data_json) VALUES `, dbName)+query.String(), args...)
 }
 
-func GetEvents(userEmail, eventType string, startTimeStampMs, endTimeStampMs int) ([]*models.Event, error) {
+func GetEvents(userEmail, eventType string, startTimeStampMs, endTimeStampMs int, eventOrder string) ([]*models.Event, error) {
 	return Query(func(event *models.Event) []interface{} {
 		return []interface{}{
-			&event.EventType, &event.EventTimeStampMs, &event.EventDataJson,
+			&event.EventType, &event.EventTimeStampMs, &event.EventData,
 		}
 	},
 		fmt.Sprintf(`SELECT
@@ -45,13 +45,15 @@ func GetEvents(userEmail, eventType string, startTimeStampMs, endTimeStampMs int
 		AND 
 			event_time_stamp <= ?
 		AND 
-			event_time_stamp >= ?`, dbName), userEmail, eventType, endTimeStampMs, startTimeStampMs)
+			event_time_stamp >= ?
+		ORDER BY
+			event_time_stamp %v`, dbName, eventOrder), userEmail, eventType, endTimeStampMs, startTimeStampMs)
 }
 
-func GetEventByByTimeStamp(userEmail string, startTimeStampMs, endTimeStampMs int) ([]*models.Event, error) {
+func GetEventByByTimeStamp(userEmail string, startTimeStampMs, endTimeStampMs int, eventOrder string) ([]*models.Event, error) {
 	return Query(func(event *models.Event) []interface{} {
 		return []interface{}{
-			&event.EventType, &event.EventTimeStampMs, &event.EventDataJson,
+			&event.EventType, &event.EventTimeStampMs, &event.EventData,
 		}
 	},
 		fmt.Sprintf(`SELECT
@@ -62,5 +64,7 @@ func GetEventByByTimeStamp(userEmail string, startTimeStampMs, endTimeStampMs in
 		AND
 			event_time_stamp <= ?
 		AND 
-			event_time_stamp >= ?`, dbName), userEmail, endTimeStampMs, startTimeStampMs)
+			event_time_stamp >= ?
+		ORDER BY
+			event_time_stamp %v`, dbName, eventOrder), userEmail, endTimeStampMs, startTimeStampMs)
 }

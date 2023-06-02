@@ -17,6 +17,7 @@ type EventGetRequest struct {
 	EventTimeStampEnd   string `form:"event_timestamp_end"`   // Date in string with format 2006-01-02 15:04:05
 	EventTimeStampStart string `form:"event_timestamp_start"` // Date in string with format 2006-01-02 15:04:05
 	EventTimeStampGMT   string `form:"gmt"`
+	EventOrder          string `form:"event_order"`
 }
 
 type EventPostResponse struct {
@@ -45,14 +46,14 @@ func parseGMT(gmt string) (int, error) {
 		return 0, fmt.Errorf(constants.GMT_OUT_OF_RANGE)
 	}
 
-	totalGMTHoursInMS := gmtHours * int(time.Hour.Milliseconds())
-	log.Infof("totalGMTHoursInMS: %v", totalGMTHoursInMS)
+	totalGMTHoursInMs := gmtHours * int(time.Hour.Milliseconds())
+	log.Infof("totalGMTHoursInMs: %v", totalGMTHoursInMs)
 
 	if gmt[0] == '*' {
-		return -totalGMTHoursInMS, nil
+		return -totalGMTHoursInMs, nil
 	}
 
-	return totalGMTHoursInMS, nil
+	return totalGMTHoursInMs, nil
 }
 
 func HandleEventGet(c *gin.Context) (any, error) {
@@ -64,19 +65,19 @@ func HandleEventGet(c *gin.Context) (any, error) {
 
 	userEmail := c.GetHeader(EMAIL_FIELD)
 
-	var endTimeStampMS int
+	var endTimeStampMs int
 	var startTimeStampMs int
-	var gmtMS int
+	var gmtMs int
 
 	if len(eventGetRequest.EventTimeStampGMT) != 0 {
 		var err error
-		gmtMS, err = parseGMT(eventGetRequest.EventTimeStampGMT)
+		gmtMs, err = parseGMT(eventGetRequest.EventTimeStampGMT)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	log.Infof("gmtMS: %v", gmtMS)
+	log.Infof("gmtMs: %v", gmtMs)
 
 	if len(eventGetRequest.EventTimeStampEnd) != 0 {
 		timeStampEnd, err := time.Parse(constants.TIME_FORMAT, eventGetRequest.EventTimeStampEnd)
@@ -84,13 +85,13 @@ func HandleEventGet(c *gin.Context) (any, error) {
 			log.Errorf("error parsing event time stamp end, err: %v", err)
 			return nil, fmt.Errorf("error parsing event time stamp end, err: %v", err)
 		} else {
-			endTimeStampMS = int(timeStampEnd.UnixMilli()) + gmtMS
+			endTimeStampMs = int(timeStampEnd.UnixMilli()) + gmtMs
 		}
 
 	}
 
-	if endTimeStampMS == 0 {
-		endTimeStampMS = int(time.Now().UnixMilli()) // default time stamp end to time now
+	if endTimeStampMs == 0 {
+		endTimeStampMs = int(time.Now().UnixMilli()) // default time stamp end to time now
 	}
 
 	if len(eventGetRequest.EventTimeStampStart) != 0 {
@@ -99,19 +100,27 @@ func HandleEventGet(c *gin.Context) (any, error) {
 			log.Errorf("error parsing event time stamp start, err: %v", err)
 			return nil, fmt.Errorf("error parsing event time stamp start, err: %v", err)
 		} else {
-			startTimeStampMs = int(timeStampStart.UnixMilli()) + gmtMS
+			startTimeStampMs = int(timeStampStart.UnixMilli()) + gmtMs
 		}
 
 	}
 
 	log.Infof("startTimeStampMs: %v", startTimeStampMs)
-	log.Infof("endTimeStampMS: %v", endTimeStampMS)
+	log.Infof("endTimeStampMs: %v", endTimeStampMs)
 
-	if startTimeStampMs > endTimeStampMS {
+	if startTimeStampMs > endTimeStampMs {
 		return nil, fmt.Errorf("start time stamp ms value invalid")
 	}
 
-	events, err := ctrl.GetEvents(userEmail, eventGetRequest.EventType, startTimeStampMs, endTimeStampMS)
+	invalidEventOrder := eventGetRequest.EventOrder != constants.EVENT_ORDER_ASC && eventGetRequest.EventOrder != constants.EVENT_ORDER_DESC
+
+	if len(eventGetRequest.EventOrder) == 0 { // default event order to desc
+		eventGetRequest.EventOrder = constants.EVENT_ORDER_DESC
+	} else if invalidEventOrder {
+		return nil, fmt.Errorf("event order is invalid, order is only ASC or DESC")
+	}
+
+	events, err := ctrl.GetEvents(userEmail, eventGetRequest.EventType, startTimeStampMs, endTimeStampMs, eventGetRequest.EventOrder)
 
 	if err != nil {
 		log.Errorf("error getting events, err: %v", err)
@@ -119,8 +128,8 @@ func HandleEventGet(c *gin.Context) (any, error) {
 	}
 
 	for _, event := range events {
-		eventDataJson := event.EventDataJson
-		event.EventDataJson = string(eventDataJson.([]byte))
+		eventDataJson := event.EventData
+		event.EventData = string(eventDataJson.([]byte))
 	}
 
 	return events, err

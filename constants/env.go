@@ -6,8 +6,12 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func Init() {
+func init() {
 	godotenv.Load()
+}
+
+func GetAppSecret() string {
+	return os.Getenv("APP_SECRET")
 }
 
 func GetAPIKey() string {
