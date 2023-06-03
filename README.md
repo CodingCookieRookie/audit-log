@@ -6,7 +6,7 @@
 3. Curl endpoints depending on usage
 
 <h2> Curl commands
-    <h4> User get event 
+    <h4> User get event </h4>
     <p>
     curl localhost:3000/users/events\?event_type=bill\&event_timestamp_start=2023-05-02_17:04:04\&event_timestamp_end=2023-06-04_22:04:05\&gmt=*8 -H "email:alvinchee98@gmail.com" -H "token:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFsdmluY2hlZTk4QGdtYWlsLmNvbSIsImV4cCI6MTY4ODExNDQyNH0.sXUYUdGRvIKOqtSEKWJkE9Q7CI2JK4R_0ZubciG8ZfE"
 
