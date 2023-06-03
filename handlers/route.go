@@ -5,6 +5,7 @@ import "github.com/gin-gonic/gin"
 func Route(engine *gin.Engine) {
 
 	{
+		//TODO: refactor to authentication service
 		api := engine.Group("/api")
 		api.GET("/token", GinHandlerWithError(HandleApiTokenGet))
 	}
