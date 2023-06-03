@@ -44,3 +44,5 @@
 
     curl localhost:3000/api/token?email=alvinchee98@gmail.com -H "app-secret:Up0F9YrxSDruZlKAxgSiKfdZp7EB8D4XY5vWtbhElHw="
 </p>
+
+###### Link to design document: https://docs.google.com/document/d/1z6fQMKwaZNspzKK10ndP_L6Ay_qa2suqLalyVCAioWA/edit?usp=sharing
