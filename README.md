@@ -2,23 +2,26 @@
 ##### Service for user to get and post any event log
 
 ## Run with docker
-1. Git clone repository into audit-log folder
-2. Inside the audit-log folder, run `./docker-start.sh`
-3. Curl endpoints depending on usage
+1. Git clone repository in any desired folder
+2. Enter the audit-log folder with `cd audit-log`
+3. Inside the audit-log folder, run `./docker-start.sh`
+4. Curl endpoints depending on usage
 
 ## Run locally (with go installed on machine)
-1. Git clone repository into audit-log folder
-2. Create a new .env file and copy-paste the content from the env.txt file in the email to the .env file
-3. Open a new terminal in the audit-log folder directory and run cmd `./go-start.sh` (Make sure no other existing docker containers are running, else comment out docker kill and rm in start.sh file)
-4. Curl endpoints depending on usage
+1. Git clone repository in any desired folder
+2. Enter the audit-log folder with `cd audit-log`
+3. Create a new .env file and copy-paste the content from the env.txt file in the email to the .env file
+4. Open a new terminal in the audit-log folder directory and run cmd `./go-start.sh` (Make sure no other existing docker containers are running, else comment out docker kill and rm in start.sh file)
+5. Curl endpoints depending on usage
 
 ## Run locally (without go installed on machine)
-1. Git clone repository into audit-log folder
-2. Create a new .env file and copy-paste the content from the env.txt file in the email to the .env file
-3. Open a new terminal in the audit-log folder directory and run cmd `./ngo-start.sh` (Make sure no other existing docker containers are running, else comment out docker kill and rm in start.sh file)
-4. Curl endpoints depending on usage
+1. Git clone repository in any desired folder
+2. Enter the audit-log folder with `cd audit-log`
+3. Create a new .env file and copy-paste the content from the env.txt file in the email to the .env file
+4. Open a new terminal in the audit-log folder directory and run cmd `./ngo-start.sh` (Make sure no other existing docker containers are running, else comment out docker kill and rm in start.sh file)
+5. Curl endpoints depending on usage
 
-### Curl commands
+### Curl command examples
 #### User get event 
 <p>
 
